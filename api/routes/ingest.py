@@ -6,6 +6,7 @@ POST /ingest/url         — scrape a website
 POST /ingest/gdrive      — import a Google Drive file by ID
 POST /ingest/text        — ingest raw text
 POST /ingest/youtube     — ingest a YouTube transcript
+POST /ingest/reset       — clear all collections (called by frontend before each new ingestion)
 
 GET  /ingest/collections         — list Chroma collections
 DELETE /ingest/collections/{name} — delete a collection
@@ -53,6 +54,34 @@ def _count_by_modality(chunks) -> dict:
 
 def _set_vision_mode(request: Request, enabled: bool) -> None:
     request.app.state.use_vision_model = enabled
+
+
+# ── Reset / clear all collections ─────────────────────────────────────────────
+
+@router.post("/reset")
+async def reset_all_collections(request: Request):
+    """
+    Delete ALL known Chroma collections.
+    Called by the frontend before each new ingestion to start fresh.
+    """
+    vs = request.app.state.vs_manager
+    collections = await vs.list_collections()
+    deleted = []
+    for col in collections:
+        try:
+            await vs.delete_collection(col["name"])
+            deleted.append(col["name"])
+        except Exception as exc:
+            log.warning("Could not delete collection %s: %s", col["name"], exc)
+
+    # Also try the default collection even if not tracked in memory
+    try:
+        await vs.delete_collection(settings.CHROMA_COLLECTION_NAME)
+    except Exception:
+        pass
+
+    log.info("Reset: deleted collections %s", deleted)
+    return {"reset": True, "deleted_collections": deleted}
 
 
 # ── File upload ───────────────────────────────────────────────────────────────
