@@ -21,10 +21,11 @@ async def query(body: QueryRequest, request: Request):
     Run a multi-modal RAG query.
 
     Retrieves relevant text, table, and image chunks from Chroma,
-    builds a vision-aware multi-modal prompt, and returns the LLM answer
-    along with the source chunks that were used.
+    builds a multi-modal prompt, and returns the LLM answer along with
+    the source chunks that were used.
     """
     vs = request.app.state.vs_manager
+    use_vision_model = getattr(request.app.state, "use_vision_model", True)
     rag_response = await run_rag(
         query=body.query,
         vs_manager=vs,
@@ -32,6 +33,7 @@ async def query(body: QueryRequest, request: Request):
         top_k=body.top_k,
         include_images=body.include_images,
         filters=body.filters,
+        use_vision_model=use_vision_model,
     )
 
     sources_out = []

@@ -4,6 +4,7 @@ Central configuration — all values come from environment variables (or .env).
 
 from typing import List
 
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -65,3 +66,13 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+
+def reload_settings_from_env() -> Settings:
+    """Reload the .env file and refresh the shared settings object."""
+    load_dotenv(".env", override=True)
+    fresh = Settings()
+    for field, value in fresh.model_dump().items():
+        setattr(settings, field, value)
+    return settings

@@ -9,7 +9,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import health, ingest, query
+from api.routes import config, health, ingest, query
 from config.settings import settings
 from core.vectorstore import VectorStoreManager
 
@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
     vs_manager = VectorStoreManager()
     await vs_manager.initialize()
     app.state.vs_manager = vs_manager
+    app.state.use_vision_model = True
     print("✅  Vector-store ready.")
     yield
     # ── Shutdown ─────────────────────────────────────────────────────────────
@@ -52,6 +53,7 @@ app.add_middleware(
 app.include_router(health.router, tags=["Health"])
 app.include_router(ingest.router, prefix="/ingest", tags=["Ingest"])
 app.include_router(query.router, prefix="/query", tags=["Query"])
+app.include_router(config.router, prefix="/config", tags=["Config"])
 
 
 if __name__ == "__main__":

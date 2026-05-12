@@ -14,7 +14,6 @@ from typing import List
 
 from langchain_core.messages import HumanMessage
 
-from config.settings import settings
 from core.llm import get_vision_llm
 from models.document import DocumentChunk, Modality
 
@@ -36,11 +35,15 @@ _MAX_CONCURRENT = 4     # parallel vision calls to avoid rate-limits
 class ImageProcessor:
     """Generate vision summaries for image chunks."""
 
-    async def process(self, chunks: List[DocumentChunk]) -> List[DocumentChunk]:
+    async def process(self, chunks: List[DocumentChunk], use_vision_model: bool = True) -> List[DocumentChunk]:
         """
         Process all chunks; enrich IMAGE/SLIDE chunks that have a base64 payload
-        with a vision-LLM summary.  Non-image chunks pass through unchanged.
+        with a vision-LLM summary. Non-image chunks pass through unchanged.
+        When use_vision_model is False, return the chunks untouched.
         """
+        if not use_vision_model:
+            return chunks
+
         image_chunks = [
             c for c in chunks
             if c.modality in (Modality.IMAGE, Modality.SLIDE) and c.image_base64

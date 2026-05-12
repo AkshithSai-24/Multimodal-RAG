@@ -13,20 +13,24 @@ class IngestURLRequest(BaseModel):
     url: str = Field(..., description="Full URL to scrape")
     max_depth: int = Field(1, ge=1, le=5, description="Crawl depth (1 = single page)")
     collection_name: Optional[str] = None
+    use_vision_model: bool = Field(True, description="Use vision model during ingestion and query")
 
 class IngestGDriveRequest(BaseModel):
     file_id: str = Field(..., description="Google Drive file ID")
     access_token: Optional[str] = Field(None, description="Override the server-level token")
     collection_name: Optional[str] = None
+    use_vision_model: bool = Field(True, description="Use vision model during ingestion and query")
 
 class IngestTextRequest(BaseModel):
     text: str = Field(..., description="Raw text to ingest")
     source_name: str = Field("manual-text", description="Friendly label")
     collection_name: Optional[str] = None
+    use_vision_model: bool = Field(True, description="Use vision model during ingestion and query")
 
 class IngestYouTubeRequest(BaseModel):
     url: str = Field(..., description="YouTube video URL")
     collection_name: Optional[str] = None
+    use_vision_model: bool = Field(True, description="Use vision model during ingestion and query")
 
 
 # ── Query schemas ─────────────────────────────────────────────────────────────

@@ -35,7 +35,7 @@ class MultiModalProcessor:
         self._image = ImageProcessor()
         self._table = TableProcessor()
 
-    async def process(self, chunks: List[DocumentChunk]) -> List[DocumentChunk]:
+    async def process(self, chunks: List[DocumentChunk], use_vision_model: bool = True) -> List[DocumentChunk]:
         """
         Run the full pipeline on *chunks*.
 
@@ -48,8 +48,11 @@ class MultiModalProcessor:
         # 1. Split text / tables
         chunks = self._text.process(chunks)
 
-        # 2. Generate vision summaries (async, batched)
-        chunks = await self._image.process(chunks)
+        # 2. Generate vision summaries only when the toggle is enabled
+        if use_vision_model:
+            chunks = await self._image.process(chunks, use_vision_model=True)
+        else:
+            chunks = await self._image.process(chunks, use_vision_model=False)
 
         # 3. Describe tables (async, batched)
         chunks = await self._table.process(chunks)

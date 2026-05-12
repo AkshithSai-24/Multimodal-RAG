@@ -14,8 +14,6 @@ DELETE /ingest/collections/{name} — delete a collection
 from __future__ import annotations
 
 import os
-import shutil
-import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -53,6 +51,10 @@ def _count_by_modality(chunks) -> dict:
     }
 
 
+def _set_vision_mode(request: Request, enabled: bool) -> None:
+    request.app.state.use_vision_model = enabled
+
+
 # ── File upload ───────────────────────────────────────────────────────────────
 
 @router.post("/file", response_model=IngestedSource)
@@ -60,8 +62,10 @@ async def ingest_file(
     request: Request,
     file: UploadFile = File(...),
     collection_name: Optional[str] = Form(None),
+    use_vision_model: bool = Form(True),
 ):
     """Upload any supported file type for multi-modal ingestion."""
+    _set_vision_mode(request, use_vision_model)
     tmp_path = await save_upload_temp(file)
     suffix = Path(tmp_path).suffix.lower()
     try:
@@ -76,7 +80,7 @@ async def ingest_file(
     if not raw_chunks:
         raise HTTPException(422, "No content could be extracted from the file.")
 
-    enriched = await _processor.process(raw_chunks)
+    enriched = await _processor.process(raw_chunks, use_vision_model=use_vision_model)
     vs = request.app.state.vs_manager
     added = await vs.add_chunks(enriched, collection_name=collection_name)
     counts = _count_by_modality(enriched)
@@ -98,13 +102,14 @@ async def ingest_file(
 @router.post("/url", response_model=IngestedSource)
 async def ingest_url(body: IngestURLRequest, request: Request):
     """Scrape a website (optional shallow crawl) and ingest all content."""
+    _set_vision_mode(request, body.use_vision_model)
     loader = LoaderFactory.from_url(body.url, max_depth=body.max_depth)
     raw_chunks = await loader.load(body.url, max_depth=body.max_depth)
 
     if not raw_chunks:
         raise HTTPException(422, "No content scraped from the URL.")
 
-    enriched = await _processor.process(raw_chunks)
+    enriched = await _processor.process(raw_chunks, use_vision_model=body.use_vision_model)
     vs = request.app.state.vs_manager
     added = await vs.add_chunks(enriched, collection_name=body.collection_name)
     counts = _count_by_modality(enriched)
@@ -126,6 +131,7 @@ async def ingest_url(body: IngestURLRequest, request: Request):
 @router.post("/gdrive", response_model=IngestedSource)
 async def ingest_gdrive(body: IngestGDriveRequest, request: Request):
     """Import a Google Drive file by its file ID."""
+    _set_vision_mode(request, body.use_vision_model)
     registry = get_mcp_registry()
     gdrive = registry.get_gdrive_client(access_token=body.access_token)
 
@@ -137,7 +143,7 @@ async def ingest_gdrive(body: IngestGDriveRequest, request: Request):
     if not raw_chunks:
         raise HTTPException(422, "No content found in the Drive file.")
 
-    enriched = await _processor.process(raw_chunks)
+    enriched = await _processor.process(raw_chunks, use_vision_model=body.use_vision_model)
     vs = request.app.state.vs_manager
     added = await vs.add_chunks(enriched, collection_name=body.collection_name)
     counts = _count_by_modality(enriched)
@@ -160,8 +166,10 @@ async def ingest_gdrive(body: IngestGDriveRequest, request: Request):
 @router.post("/text", response_model=IngestedSource)
 async def ingest_text(body: IngestTextRequest, request: Request):
     """Ingest a raw text string."""
+    _set_vision_mode(request, body.use_vision_model)
     from models.document import DocumentChunk, Modality, SourceType as ST
     import uuid
+
     raw_chunks = [
         DocumentChunk(
             content=body.text,
@@ -171,7 +179,7 @@ async def ingest_text(body: IngestTextRequest, request: Request):
             source_name=body.source_name,
         )
     ]
-    enriched = await _processor.process(raw_chunks)
+    enriched = await _processor.process(raw_chunks, use_vision_model=body.use_vision_model)
     vs = request.app.state.vs_manager
     added = await vs.add_chunks(enriched, collection_name=body.collection_name)
 
@@ -192,6 +200,7 @@ async def ingest_text(body: IngestTextRequest, request: Request):
 @router.post("/youtube", response_model=IngestedSource)
 async def ingest_youtube(body: IngestYouTubeRequest, request: Request):
     """Fetch a YouTube transcript and ingest it."""
+    _set_vision_mode(request, body.use_vision_model)
     from loaders.youtube_loader import YouTubeLoader
     loader = YouTubeLoader()
     try:
@@ -202,7 +211,7 @@ async def ingest_youtube(body: IngestYouTubeRequest, request: Request):
     if not raw_chunks:
         raise HTTPException(422, "No transcript available for this video.")
 
-    enriched = await _processor.process(raw_chunks)
+    enriched = await _processor.process(raw_chunks, use_vision_model=body.use_vision_model)
     vs = request.app.state.vs_manager
     added = await vs.add_chunks(enriched, collection_name=body.collection_name)
 

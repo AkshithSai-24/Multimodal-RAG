@@ -1,3 +1,3 @@
-from api.routes import health, ingest, query
+from api.routes import config, health, ingest, query
 
-__all__ = ["health", "ingest", "query"]
+__all__ = ["health", "ingest", "query", "config"]
