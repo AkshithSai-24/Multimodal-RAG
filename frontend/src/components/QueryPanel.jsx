@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
   Send, Bot, User, Cpu, FileText, Image, Table2, Layers,
-  ChevronDown, ChevronUp, RefreshCw
+  ChevronDown, ChevronUp, RefreshCw, Hash
 } from 'lucide-react';
 import styles from './QueryPanel.module.css';
 
@@ -13,6 +13,7 @@ const MODALITY_COLOR = { text: 'var(--cyan)', image: 'var(--purple)', table: 'va
 
 export default function QueryPanel({ onQuery, onReset, loading }) {
   const [query, setQuery] = useState('');
+  const [topK, setTopK] = useState(6);
   const [history, setHistory] = useState([]);
   const textareaRef = useRef();
   const bottomRef = useRef();
@@ -27,7 +28,7 @@ export default function QueryPanel({ onQuery, onReset, loading }) {
     setQuery('');
     setHistory(h => [...h, { role: 'user', content: q }]);
     try {
-      const res = await onQuery(q);
+      const res = await onQuery(q, topK);
       setHistory(h => [...h, { role: 'assistant', content: res.answer, sources: res.sources, model: res.model_used }]);
     } catch (e) {
       setHistory(h => [...h, { role: 'error', content: e.message }]);
@@ -71,6 +72,29 @@ export default function QueryPanel({ onQuery, onReset, loading }) {
 
         {loading && <TypingIndicator />}
         <div ref={bottomRef} />
+      </div>
+
+      {/* Top-K control */}
+      <div className={styles.topKRow}>
+        <div className={styles.topKLabel}>
+          <Hash size={12} />
+          <span>Top-K documents to retrieve</span>
+        </div>
+        <div className={styles.topKControls}>
+          <button
+            className={styles.topKBtn}
+            onClick={() => setTopK(v => Math.max(1, v - 1))}
+            disabled={loading || topK <= 1}
+            aria-label="Decrease Top-K"
+          >−</button>
+          <span className={styles.topKValue}>{topK}</span>
+          <button
+            className={styles.topKBtn}
+            onClick={() => setTopK(v => Math.min(20, v + 1))}
+            disabled={loading || topK >= 20}
+            aria-label="Increase Top-K"
+          >+</button>
+        </div>
       </div>
 
       {/* Input row */}

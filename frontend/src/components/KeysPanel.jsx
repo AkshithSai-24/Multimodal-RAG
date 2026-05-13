@@ -1,6 +1,6 @@
 // src/components/KeysPanel.jsx
 import { useState } from 'react';
-import { KeyRound, Eye, EyeOff, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { KeyRound, Eye, EyeOff, CheckCircle2, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { uploadEnv } from '../api';
 import styles from './KeysPanel.module.css';
 
@@ -96,6 +96,8 @@ export default function KeysPanel({ onKeysReady }) {
             onChange={setNvidiaKey}
             show={showNvidia}
             onToggle={() => setShowNvidia(v => !v)}
+            refLink="https://build.nvidia.com/settings/api-keys"
+            refLabel="Get free key → build.nvidia.com"
           />
           <KeyField
             label="OpenRouter API Key"
@@ -104,6 +106,8 @@ export default function KeysPanel({ onKeysReady }) {
             onChange={setOpenrouterKey}
             show={showOr}
             onToggle={() => setShowOr(v => !v)}
+            refLink="https://openrouter.ai/docs/api/reference/authentication"
+            refLabel="Get free key → openrouter.ai"
           />
 
           {error && (
@@ -132,10 +136,23 @@ export default function KeysPanel({ onKeysReady }) {
   );
 }
 
-function KeyField({ label, placeholder, value, onChange, show, onToggle }) {
+function KeyField({ label, placeholder, value, onChange, show, onToggle, refLink, refLabel }) {
   return (
     <div className={styles.fieldGroup}>
-      <label className={styles.label}>{label}</label>
+      <div className={styles.labelRow}>
+        <label className={styles.label}>{label}</label>
+        {refLink && (
+          <a
+            href={refLink}
+            target="_blank"
+            rel="noreferrer"
+            className={styles.refLink}
+          >
+            <ExternalLink size={10} />
+            {refLabel}
+          </a>
+        )}
+      </div>
       <div className={styles.inputWrap}>
         <input
           type={show ? 'text' : 'password'}

@@ -113,6 +113,13 @@
   gap: 4px;
 }
 
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .label {
   font-size: var(--text-xs);
   font-weight: 600;
@@ -120,6 +127,22 @@
   text-transform: uppercase;
   color: var(--cyan);
   font-family: var(--font-display);
+}
+
+.refLink {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  color: var(--green);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.refLink:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 .inputWrap {

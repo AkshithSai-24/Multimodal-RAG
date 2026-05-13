@@ -72,10 +72,10 @@ export default function App() {
     }
   };
 
-  const handleQuery = async (q) => {
+  const handleQuery = async (q, topK = 6) => {
     setQueryLoading(true);
     try {
-      const res = await queryRAG(q);
+      const res = await queryRAG(q, topK);
       return res;
     } finally {
       setQueryLoading(false);
