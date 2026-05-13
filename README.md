@@ -4,6 +4,7 @@ A full-stack **Retrieval-Augmented Generation (RAG)** application that understan
 
 Built with **FastAPI** + **ChromaDB** on the backend and **React (Vite)** on the frontend.
 
+🌐 **[Live Demo → rag.akshithsai.co.in](https://rag.akshithsai.co.in/)**
 ---
 
 ## ✨ Features
