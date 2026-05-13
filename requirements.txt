@@ -1,24 +1,23 @@
 fastapi
 uvicorn[standard]
-python-multipart     
+python-multipart
+
 langchain
 langchain-core
 langchain-community
 langchain-text-splitters
 langchain-chroma
 langchain-openrouter
-langchain_nvidia_ai_endpoints      
-
+langchain_nvidia_ai_endpoints
 
 langchain-google-genai
-google-generativeai     
+google-generativeai
 
 chromadb
 
-
 pypdf
-pdfplumber>
-pymupdf>             
+pdfplumber
+pymupdf
 
 python-docx
 python-pptx
@@ -26,10 +25,10 @@ python-pptx
 httpx
 trafilatura
 beautifulsoup4
-lxml                    
+lxml
 pandas
-openpyxl                  
-tabulate                 
+openpyxl
+tabulate
 
 Pillow>=10.0.0
 
