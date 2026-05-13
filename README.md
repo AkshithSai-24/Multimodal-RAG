@@ -70,7 +70,7 @@ cd multimodal-rag
 cd backend
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r ../requirements.txt
+pip install -r ./backend/requirements.txt
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -219,7 +219,7 @@ POST /config/env   — upload a .env file to reconfigure the backend at runtime
 
 ## 📄 License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT 
 
 ---
 

@@ -1,6 +1,6 @@
 // src/api.js — Backend API calls, all pointing at http://localhost:8000
 
-const BASE = 'http://localhost:8000';
+const BASE = 'https://rag-backend.akshithsai.co.in/';
 
 /** Thin wrapper for JSON POST */
 async function post(path, body) {
