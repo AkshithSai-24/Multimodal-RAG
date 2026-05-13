@@ -1,0 +1,252 @@
+/* App.module.css */
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(99,210,255,0.05) 0%, transparent 60%),
+    var(--bg-base);
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 12, 18, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.headerInner {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+  height: clamp(52px, 7vw, 68px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 12px);
+  min-width: 0;
+}
+
+.logoMark {
+  width: clamp(30px, 4vw, 40px);
+  height: clamp(30px, 4vw, 40px);
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(99,210,255,0.15), rgba(155,116,255,0.1));
+  border: 1px solid var(--border-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+  flex-shrink: 0;
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.logoText {
+  font-family: var(--font-display);
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #e8edf5, var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.logoBy {
+  font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+  color: var(--text-muted);
+  display: block;
+}
+
+.logoLink {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.logoLink:hover { color: var(--text-primary); }
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusOnline {
+  background: var(--green);
+  box-shadow: 0 0 6px rgba(74,222,128,0.5);
+}
+
+.statusOffline { background: var(--red); }
+
+.statusLabel {
+  font-family: var(--font-mono);
+  font-size: clamp(0.62rem, 1.4vw, 0.72rem);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Hide status text on very small screens */
+@media (max-width: 360px) {
+  .statusLabel { display: none; }
+}
+
+/* ── Main layout ─────────────────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  max-width: 1800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(1rem, 2.5vw, 1.75rem) clamp(0.75rem, 2.5vw, 1.5rem);
+  display: grid;
+  /* Mobile: single column. Tablet+: left sidebar + main. TV: wider sidebar */
+  grid-template-columns: 1fr;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  align-items: start;
+}
+
+/* Tablet and up */
+@media (min-width: 700px) {
+  .main {
+    grid-template-columns: clamp(300px, 35vw, 460px) 1fr;
+  }
+}
+
+/* Large TV screens */
+@media (min-width: 1800px) {
+  .main {
+    grid-template-columns: 500px 1fr;
+  }
+}
+
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+/* On tablet+ the left column is sticky */
+@media (min-width: 700px) {
+  .leftCol {
+    position: sticky;
+    top: calc(clamp(52px, 7vw, 68px) + 1rem);
+    /* Allow left col to scroll independently if it overflows viewport */
+    max-height: calc(100dvh - clamp(52px, 7vw, 68px) - 2rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+.rightCol {
+  min-height: clamp(400px, 60vh, 680px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* On mobile the right col (query panel) comes AFTER left col naturally */
+
+/* Error box */
+.errorBox {
+  background: rgba(248,113,113,0.06);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+/* Keys warning */
+.keysWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.3);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  color: #fbbf24;
+  font-size: var(--text-sm);
+  animation: fadeIn 0.2s ease;
+  line-height: 1.4;
+}
+
+.keysWarning svg { flex-shrink: 0; margin-top: 2px; }
+
+/* Query locked state */
+.queryLocked {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.5rem, 4vw, 3rem) 2rem;
+  text-align: center;
+  gap: 12px;
+  min-height: clamp(260px, 40vh, 400px);
+  border-style: dashed;
+}
+
+.lockIcon {
+  width: clamp(50px, 7vw, 64px);
+  height: clamp(50px, 7vw, 64px);
+  border-radius: var(--radius-lg);
+  background: rgba(99,210,255,0.04);
+  border: 1px solid var(--border-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.lockTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.lockSub {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border-subtle);
+  padding: clamp(10px, 2vw, 14px) clamp(1rem, 3vw, 1.5rem);
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  background: rgba(10,12,18,0.6);
+  backdrop-filter: blur(8px);
+}
+
+.footer strong {
+  color: var(--cyan);
+  font-weight: 600;
+}

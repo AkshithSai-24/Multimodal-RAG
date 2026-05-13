@@ -44,3 +44,63 @@ Thumbs.db
 
 # HuggingFace model cache (large, re-downloadable)
 .cache/
+
+
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules
+dist
+dist-ssr
+
+# Vite files
+.vite
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Build output
+coverage
+
+# TypeScript
+*.tsbuildinfo
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional cache directories
+.cache
+.temp
+.tmp
+
+# OS generated files
+Thumbs.db
+
+# ESLint cache
+.eslintcache
+
+# Stylelint cache
+.stylelintcache
